@@ -44,9 +44,29 @@ Buon lavoro e buon divertimento
       	WHERE stanze.floor = 1;
 
 7.	SELECT paganti.name, paganti.lastname, paganti.address, pagamenti.price
-     	FROM pagamenti, pagamenti.prenotazione_id
-      	INNER JOIN paganti
+      	FROM pagamenti
+      	JOIN paganti
       	ON pagamenti.pagante_id = paganti.id
       	WHERE pagamenti.prenotazione_id = 7;
 
+1. Fai un'analisi per vedere se ci sono ore in cui le prenotazioni sono più frequenti.
+2. Le stanze sono state tutte prenotate almeno una volta? (Visualizzare le stanze non ancora prenotate)
+3. Come si chiamano gli ospiti che hanno fatto più di due prenotazioni?
 
+1.	SELECT HOUR(`created_at`) AS "ora", COUNT(*) AS "prenotazioni"
+      	FROM `prenotazioni`
+      	GROUP BY HOUR(`created_at`)
+      	ORDER BY COUNT(*) DESC;
+
+2.	SELECT *
+      	FROM stanze
+      	LEFT JOIN prenotazioni
+      	ON prenotazioni.stanza_id = stanze.id
+      	WHERE prenotazioni.stanza_id IS null;
+
+3.	SELECT ospiti.name, ospiti.lastname, COUNT(*) AS "numero_prenotazioni"
+      	FROM prenotazioni_has_ospiti
+      	INNER JOIN ospiti
+      	ON prenotazioni_has_ospiti.ospite_id = ospiti.id
+      	GROUP BY prenotazioni_has_ospiti.ospite_id
+      	HAVING COUNT(*) > 2
